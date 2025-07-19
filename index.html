@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DFT File Generator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      font-family: monospace;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    a {
+      display: block;
+      margin-top: 15px;
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>DFT File Generator</h1>
+  <p>Paste your template code below (URL-encoded, base64-compressed):</p>
+  <textarea id="templateInput" placeholder="Paste template code here..."></textarea>
+  <br>
+  <button onclick="generateDFT()">Generate .dft File</button>
+  <a id="downloadLink" style="display: none;" download="generated_template.dft">Download .dft File</a>
+
+  <script>
+    function generateDFT() {
+      const encoded = document.getElementById("templateInput").value.trim();
+      try {
+        const decoded = decodeURIComponent(encoded);
+        const binary = atob(decoded);
+        const byteArray = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          byteArray[i] = binary.charCodeAt(i);
+        }
+
+        const blob = new Blob([byteArray], { type: "application/gzip" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.getElementById("downloadLink");
+        link.href = url;
+        link.style.display = "block";
+        link.textContent = "Download .dft File";
+      } catch (e) {
+        alert("Failed to decode and create .dft file. Check the input format.");
+        console.error(e);
+      }
+    }
+  </script>
+</body>
+</html>
